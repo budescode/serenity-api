@@ -25,7 +25,7 @@ SECRET_KEY = 'ghe@k+-hjd5p3h#pqo&oa3xm6-8xt76in9ye-=to-w$djrc5gz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     #my apps
     'acc_users',
     'administrator',
+    'courses',
     #myapps
     'rest_framework',
     'rest_framework.authtoken',

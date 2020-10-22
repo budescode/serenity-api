@@ -54,20 +54,13 @@ class UserLogin(generics.ListAPIView):
                     userdetails['token'] = user_token
                     userdetails['phone_number'] = user.phone_number
                     userdetails['fullname'] = user.fullname
-                    userdetails['date_of_birth'] = user.date_of_birth
-                    userdetails['occupation'] = user.occupation
-                    userdetails['home_address'] = user.home_address
-                    userdetails['state'] = user.state
-                    userdetails['city'] = user.city
-                    userdetails['marital_status'] = user.marital_status
-                    userdetails['educational_level'] = user.educational_level
-                    userdetails['wallet'] = user.wallet
-
                     return Response(userdetails, status=status.HTTP_201_CREATED)
             else:
-                return Response('Not found', status=status.HTTP_404_NOT_FOUND)
+                data = {"message":"Invalid Login Details"}
+                return Response(data, status=status.HTTP_404_NOT_FOUND)
         else:
-            return Response('Input right fields', status=status.HTTP_404_NOT_FOUND)
+            data = {"message":"input right fields"}
+            return Response(data, status=status.HTTP_404_NOT_FOUND)
     def get_queryset(self):
         qs = []
         return qs
@@ -104,8 +97,8 @@ class UserProfile(generics.ListAPIView):
     ]
     def get_queryset(self):
         qs = get_user_model().objects.filter(username = self.request.user.username)
-        return qs    
-    
+        return qs
+
 
 class UserRegister(generics.ListAPIView):
     lookup_field = 'pk'
@@ -124,10 +117,12 @@ class UserRegister(generics.ListAPIView):
             theu = email.find('@')
             username = email[:theu]
             if theu == '-1':
-                return Response('send a valid email', status=status.HTTP_400_BAD_REQUEST)
+                data = {"message":"send a valid email"}
+                return Response(data, status=status.HTTP_400_BAD_REQUEST)
             try:
                 user = get_user_model().objects.get(email=email, username=username)
-                return Response('Email already exist', status=status.HTTP_400_BAD_REQUEST)
+                data = {"message":"Email already exist"}
+                return Response(data, status=status.HTTP_400_BAD_REQUEST)
             except:
                 user = get_user_model().objects.create(
                 username=username,
@@ -140,9 +135,11 @@ class UserRegister(generics.ListAPIView):
                 user_token = Token.objects.get_or_create(user=user)
                 user_token = user_token[0]
                 user_token = user_token.key
-                return Response(user_token, status=status.HTTP_201_CREATED)
+                data = {"fullname":fullname, "email":email, "phone_number":phone_number, "token":user_token}
+                return Response(data, status=status.HTTP_201_CREATED)
         else:
-            return Response('Input right fields', status=status.HTTP_400_BAD_REQUEST)
+            data = {"message":"Input right fields"}
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
     def get_queryset(self):
         qs = []
         return qs
@@ -287,7 +284,7 @@ class EditProfileView(generics.ListAPIView):
                     user.educational_level = educational_level
                     user.save()
                     return Response(details, status=status.HTTP_201_CREATED)
-                
+
             else:
                 user = get_user_model().objects.get(username=self.request.user.username)
                 theu = email.find('@')
